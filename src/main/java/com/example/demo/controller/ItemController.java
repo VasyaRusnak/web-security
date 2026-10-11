@@ -2,50 +2,23 @@ package com.example.demo.controller;
 
 
 
-/*
-  @author   george
-  @project   web-security26
-  @class  ItemController
-  @version  1.0.0
-  @since 02/09/2026 - 21.28
-*/
-
-import com.example.demo.model.Item;
-import com.example.demo.service.ItemService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/items")
-@RequiredArgsConstructor
 public class ItemController {
-    private final ItemService itemService;
 
-    @GetMapping
-    public List<Item> getAll(String id){
-        return itemService.getAllItems();
-    }
+    @GetMapping("/hello/admin")
+    public String helloAdmin() { return "Hello Admin!"; }
 
-    @GetMapping("/{id}")
-    public Item getItem(@PathVariable String id){
-        return itemService.getItem(id);
-    }
+    @GetMapping("/hello/user")
+    public String helloUser() { return "Hello User!"; }
 
-    @PostMapping
-    public Item createItem(@RequestBody Item item){
-        return itemService.createItem(item);
-    }
+    @GetMapping("/hello/man")
+    public String helloMan() { return "Hello Man!"; }
 
-    @PutMapping
-    public Item updateItem(@RequestBody Item item){
-        return itemService.updateItem(item);
-    }
-
-    @DeleteMapping("/{id}")
-    public   void deleteItem(@PathVariable String id){
-        itemService.deleteItem(id);
-    }
-
+    @GetMapping("/unknown")
+    public String unknown() { return "Hello Unknown Route!"; }
 }
