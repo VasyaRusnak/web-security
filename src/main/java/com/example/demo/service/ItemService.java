@@ -1,16 +1,7 @@
 package com.example.demo.service;
 
-
-
-/*
-  @author   vasya
-  @project  demo
-  @class  ItemService
-  @version  1.0.0
-  @since 02/09/2026 - 21.10
-*/
-
 import com.example.demo.model.Item;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,6 +39,8 @@ public class ItemService {
         return item;
     }
 
+    // Захист на рівні сервісу (приклад з відео)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteItem(String id){
         Item item = getItem(id);
         items.remove(item);
