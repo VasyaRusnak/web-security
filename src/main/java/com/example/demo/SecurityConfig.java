@@ -1,5 +1,4 @@
-package com.example.websecurity;
-
+package com.example.demo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,51 +9,44 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Вмикає обробку анотацій @PreAuthorize
+@EnableMethodSecurity // ВАЖЛИВО! Саме це вмикає роботу анотацій @PreAuthorize
 public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Створюємо бін PasswordEncoder
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/index.html", "/", "/api/v1/items/index").permitAll() // Доступно всім
-                        // Видалили старі requestMatchers. Тепер все регулюють анотації
-                        .anyRequest().authenticated() // Всі інші запити вимагають входу
+                        // Додано "/api/v1/items/index", щоб анонімний тест міг отримати доступ
+                        .requestMatchers("/index.html", "/", "/api/v1/items/index").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode("admin")) // Використовуємо passwordEncoder
+                .password("{noop}admin")
                 .roles("ADMIN")
                 .build();
 
         UserDetails user = User.builder()
                 .username("user")
-                .password(passwordEncoder.encode("user")) // Використовуємо passwordEncoder
+                .password("{noop}user")
                 .roles("USER")
                 .build();
 
         UserDetails superadmin = User.builder()
                 .username("superadmin")
-                .password(passwordEncoder.encode("superadmin")) // Використовуємо passwordEncoder
+                .password("{noop}superadmin")
                 .roles("SUPERADMIN")
                 .build();
 
