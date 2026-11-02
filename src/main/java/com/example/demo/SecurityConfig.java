@@ -1,7 +1,9 @@
 package com.example.demo;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // ВАЖЛИВО! Саме це вмикає роботу анотацій @PreAuthorize
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -22,34 +24,31 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Додано "/api/v1/items/index", щоб анонімний тест міг отримати доступ
-                        .requestMatchers("/index.html", "/", "/api/v1/items/index").permitAll()
+                        .requestMatchers("/index.html", "/", "/api/v1/items/index", "/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                // ДОДАЙТЕ ЦЕЙ БЛОК:
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(org.springframework.http.HttpStatus.UNAUTHORIZED.value(), org.springframework.http.HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                        })
+                );
+
         return http.build();
     }
-
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails admin = User.builder()
-                .username("admin")
+        UserDetails john = User.builder()
+                .username("john@email.com")
                 .password("{noop}admin")
                 .roles("ADMIN")
                 .build();
 
-        UserDetails user = User.builder()
-                .username("user")
-                .password("{noop}user")
-                .roles("USER")
-                .build();
+        return new InMemoryUserDetailsManager(john);
+    }
 
-        UserDetails superadmin = User.builder()
-                .username("superadmin")
-                .password("{noop}superadmin")
-                .roles("SUPERADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, user, superadmin);
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
