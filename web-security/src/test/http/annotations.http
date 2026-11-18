@@ -1,0 +1,37 @@
+### 1. Адмін отримує доступ до адмін-маршруту (200 OK)
+GET http://localhost:8080/api/v1/items/hello/admin
+Authorization: Basic admin admin
+
+### 2. Юзер намагається зайти на адмін-маршрут (403 Forbidden)
+GET http://localhost:8080/api/v1/items/hello/admin
+Authorization: Basic user user
+
+### 3. Юзер отримує доступ до свого маршруту (200 OK)
+GET http://localhost:8080/api/v1/items/hello/user
+Authorization: Basic user user
+
+### 4. Адмін намагається зайти на юзер-маршрут (403 Forbidden)
+GET http://localhost:8080/api/v1/items/hello/user
+Authorization: Basic admin admin
+
+### 5. Адмін має доступ до спільного маршруту (200 OK)
+GET http://localhost:8080/api/v1/items/hello/man
+Authorization: Basic admin admin
+
+### 6. Суперадмін має доступ до спільного маршруту (200 OK)
+GET http://localhost:8080/api/v1/items/hello/man
+Authorization: Basic superadmin superadmin
+
+### 7. Юзер намагається зайти на спільний (не для нього) маршрут (403 Forbidden)
+GET http://localhost:8080/api/v1/items/hello/man
+Authorization: Basic user user
+
+### 8. Юзер отримує доступ до роута без @PreAuthorize (200 OK)
+GET http://localhost:8080/api/v1/items/unknown
+Authorization: Basic user user
+
+### 9. Анонімний доступ до відкритого маршруту (permitAll) (200 OK)
+GET http://localhost:8080/api/v1/items/index
+
+### 10. Анонімний доступ до захищеного маршруту (401 Unauthorized)
+GET http://localhost:8080/api/v1/items/unknown

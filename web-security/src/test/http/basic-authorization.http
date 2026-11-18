@@ -1,0 +1,68 @@
+### 1. GET all items (Отримати список всіх елементів)
+GET http://localhost:8080/api/v1/items
+Authorization: Basic admin admin
+Accept: application/json
+
+### 2. GET one item (Отримати елемент з ID 1)
+GET http://localhost:8080/api/v1/items/1
+Authorization: Basic admin admin
+Accept: application/json
+
+### 3. GET one item (Отримати елемент з ID 2)
+GET http://localhost:8080/api/v1/items/2
+Authorization: Basic admin admin
+Accept: application/json
+
+### 4. POST create new item (Створити новий елемент)
+POST http://localhost:8080/api/v1/items
+Authorization: Basic admin admin
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "New API Item",
+  "description": "Created via HTTP client",
+  "price": 100.50
+}
+
+### 5. PUT update existing item (Повністю оновити елемент з ID 1)
+PUT http://localhost:8080/api/v1/items/1
+Authorization: Basic admin admin
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Updated API Item",
+  "description": "Replaced completely",
+  "price": 150.00
+}
+
+### 6. PATCH partially update item (Частково оновити елемент з ID 2)
+PATCH http://localhost:8080/api/v1/items/2
+Authorization: Basic admin admin
+Accept: application/json
+Content-Type: application/json
+
+{
+  "price": 89.99
+}
+
+### 7. DELETE an item (Видалити елемент з ID 3)
+DELETE http://localhost:8080/api/v1/items/3
+Authorization: Basic admin admin
+Accept: application/json
+
+### 8. GET items with pagination (Отримати список з пагінацією)
+GET http://localhost:8080/api/v1/items?page=1&limit=10
+Authorization: Basic admin admin
+Accept: application/json
+
+### 9. GET items with filter (Отримати відфільтрований список)
+GET http://localhost:8080/api/v1/items?category=test
+Authorization: Basic admin admin
+Accept: application/json
+
+### 10. GET non-existent item (Тест помилки 404 Not Found)
+GET http://localhost:8080/api/v1/items/99999
+Authorization: Basic admin admin
+Accept: application/json

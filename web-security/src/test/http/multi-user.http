@@ -1,0 +1,38 @@
+### 1. ADMIN пробує зайти на свій роут (Має бути 200 OK)
+GET http://localhost:8080/api/v1/items/hello/admin
+Authorization: Basic admin admin
+
+### 2. ADMIN пробує зайти на роут юзера (Має бути 403 Forbidden)
+GET http://localhost:8080/api/v1/items/hello/user
+Authorization: Basic admin admin
+
+### 3. ADMIN пробує зайти на спільний роут (Має бути 200 OK)
+GET http://localhost:8080/api/v1/items/hello/man
+Authorization: Basic admin admin
+
+### 4. USER пробує зайти на свій роут (Має бути 200 OK)
+GET http://localhost:8080/api/v1/items/hello/user
+Authorization: Basic user user
+
+### 5. USER пробує зайти на роут адміна (Має бути 403 Forbidden)
+GET http://localhost:8080/api/v1/items/hello/admin
+Authorization: Basic user user
+
+### 6. USER пробує зайти на спільний роут (Має бути 200 OK)
+GET http://localhost:8080/api/v1/items/hello/man
+Authorization: Basic user user
+
+### 7. SUPERADMIN пробує зайти на роут адміна (Має бути 403 Forbidden, бо він не ADMIN)
+GET http://localhost:8080/api/v1/items/hello/admin
+Authorization: Basic superadmin superadmin
+
+### 8. SUPERADMIN пробує зайти на роут юзера (Має бути 403 Forbidden, бо він не USER)
+GET http://localhost:8080/api/v1/items/hello/user
+Authorization: Basic superadmin superadmin
+
+### 9. SUPERADMIN пробує зайти на невідомий роут (Має бути 200 OK, бо він авторизований)
+GET http://localhost:8080/api/v1/items/unknown
+Authorization: Basic superadmin superadmin
+
+### 10. Анонім пробує зайти на захищений роут без пароля (Має бути 401 Unauthorized)
+GET http://localhost:8080/api/v1/items/hello/man
