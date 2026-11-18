@@ -1,13 +1,51 @@
 package com.example.demo.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.model.Item;
+import com.example.demo.service.ItemService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/items")
 public class ItemController {
+
+    private final ItemService itemService;
+
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
+    @GetMapping
+    public List<Item> all() {
+        return itemService.getAllItems();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> one(@PathVariable String id) {
+        Item item = itemService.getItem(id);
+        return item == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(item);
+    }
+
+    @PostMapping
+    public Item create(@RequestBody Item item) {
+        return itemService.createItem(item);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Item> update(@PathVariable String id, @RequestBody Item item) {
+        item.setId(id);
+        Item updated = itemService.updateItem(item);
+        return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        itemService.deleteItem(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/hello/admin")
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,0 +1,54 @@
+### 0. Login as ADMIN -> saves {{adminToken}}
+POST http://localhost:8080/api/v1/auth/authenticate
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin" }
+
+> {% client.global.set("adminToken", response.body.token); %}
+
+### 0b. Login as USER -> saves {{userToken}}
+POST http://localhost:8080/api/v1/auth/authenticate
+Content-Type: application/json
+
+{ "username": "user", "password": "user" }
+
+> {% client.global.set("userToken", response.body.token); %}
+
+### 1. CREATE with JWT (admin) -> 200, createdBy = "admin"
+POST http://localhost:8080/api/v1/items
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "id": "100", "name": "QQQ", "description": "audit demo" }
+
+### 2. UPDATE with JWT (user) -> 200, createdBy = "admin", lastModifiedBy = "user"
+PUT http://localhost:8080/api/v1/items/100
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{ "name": "QQQ-updated", "description": "changed by user" }
+
+### 3. DELETE as USER -> 403 Forbidden (only ADMIN may delete)
+DELETE http://localhost:8080/api/v1/items/100
+Authorization: Bearer {{userToken}}
+
+### 4. DELETE as ADMIN -> 204, console prints "AUDIT: item 100 deleted by admin at ..."
+DELETE http://localhost:8080/api/v1/items/100
+Authorization: Bearer {{adminToken}}
+
+### 5. CREATE with EXPIRED token -> 401 Invalid or expired JWT
+POST http://localhost:8080/api/v1/items
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sInN1YiI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.QL5788byCfCrtOXP_YSwxRCcOmhPC-bFZCvmDl3k84A
+Content-Type: application/json
+
+{ "id": "101", "name": "x", "description": "x" }
+
+### Bonus 6. CREATE with no token -> 401
+POST http://localhost:8080/api/v1/items
+Content-Type: application/json
+
+{ "id": "102", "name": "x", "description": "x" }
+
+### Bonus 7. GET all (shows audit fields) 
+GET http://localhost:8080/api/v1/items
+Authorization: Bearer {{adminToken}}

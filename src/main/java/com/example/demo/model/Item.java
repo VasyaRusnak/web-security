@@ -4,6 +4,10 @@ package com.example.demo.model;
 
 import lombok.*;
 
+import java.time.Instant;
+
+import java.time.Instant;
+
 /*
   @author   george
   @project   web-security26
@@ -20,6 +24,18 @@ public class Item {
     private String id;
     private String name;
     private String description;
+
+    // --- audit fields (filled by ItemService from the JWT) ---
+    private String createdBy;
+    private Instant createdDate;
+    private String lastModifiedBy;
+    private Instant lastModifiedDate;
+
+    public Item(String id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     public Item(String description, String name) {
         this.description = description;
